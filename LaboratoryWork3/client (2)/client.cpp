@@ -5,7 +5,7 @@
 #include <ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 using namespace std;
-int main(void) {
+int main(void){
 	WORD wVersionRequested = MAKEWORD(2, 2);
 	WSADATA wsaData;
 	if (WSAStartup(wVersionRequested, &wsaData) != 0) { return -1; }
