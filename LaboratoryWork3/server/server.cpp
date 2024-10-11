@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <iostream>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 using namespace std;
 struct LDTC {
@@ -43,8 +44,14 @@ DWORD WINAPI ThreadFunc(LPVOID client_socket){
 	return 0;
 }
 int numcl = 0;
-void print(){
-	if (numcl) printf("%d client connected\n", numcl);
+void print(sockaddr_in local_addr, sockaddr_in client_addr){
+	if (numcl) {
+		printf("%d client connected\n", numcl);
+		char address_line[50];
+		inet_ntop(AF_INET, &(client_addr.sin_addr), address_line, 49);
+		cout << "client_port = " << ntohs(local_addr.sin_port) << endl
+			<< "client_IP-addr = " << address_line << endl << endl;
+	}
 	else printf("No clients connected\n");
 }
 int main(void){
@@ -64,7 +71,7 @@ int main(void){
 	int client_addr_size = sizeof(client_addr);
 	while ((client_socket = accept(s, (sockaddr*)&client_addr, &client_addr_size))){
 		numcl++;
-		print();
+		print(local_addr, client_addr);
 		DWORD thID;
 		CreateThread(NULL, NULL, ThreadFunc, &client_socket, NULL, &thID);
 	}
